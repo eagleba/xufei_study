@@ -3,13 +3,14 @@
 	$data=file_get_contents("php://input"); 
 	$data = json_decode($data, TRUE); 
 	
-	$TM_START_MSG = "您好。这里是ABC英语。新学期开始了，我们为小朋友准备了免费的外教英语试听课，想邀请小朋友参加。请问您近期是否想要帮孩子了解英语培训课程呢？";
-	$TM_END_MSG = "好的。感谢您对我工作的支持，希望ABC英语对您的孩子的学习有帮助，祝您生活愉快！再见！";
-	$TMA_MSG = "好的，我是ABC英语，在江南大道附近，我们引进美国幼儿园和小学教材，由资深外教老师任教、让孩子在歌曲、游戏、故事、动画片等活动中轻松学英文。我们的外教英语体验活动通常在周日上午或周三晚上，也可以为您预约其他时间。有英语基础的小朋友，还可以旁听我们周日上午的正式课程，您看孩子哪个时间会比较合适呢？";
-    $TMB_MSG = "好的，我理解。小朋友是还没有开始打算学英语呢？还是已经在其他地方学习了？";
-    $TMC_MSG = "现在英语作为第二语言，孩子在以后的学习中是必然会运用到的，孩子的英语启蒙越早越好呢。我们ABC英语引进美国幼儿园和小学教材，由资深外教老师任教、让孩子在歌曲、游戏、故事、动画片等活动中轻松学英文，很受小朋友的欢迎，您不妨带孩子来免费体验一下。我们还定期举行公益的英语角活动，即使暂时不打算报课，也可以长期参与我们的英语角活动与更多的家长和小朋友交流，培养英语兴趣。您看是否要帮孩子做一个了解呢？";
-    $TMD_MSG = "明白了，我们会尽量根据孩子的特点准备活动内容。稍后我们的老师会通知您活动时间和地址，请您留意一下。好吗？";
-    $TME_MSG = "好的,下次有试听课时我再联系您,您看行吗";
+	$TM_START_MSG = "TM_START,您好。这里是ABC英语。新学期开始了，我们为小朋友准备了免费的外教英语试听课，想邀请小朋友参加。请问您近期是否想要帮孩子了解英语培训课程呢？";
+	$TM_END_MSG = "TM_END,好的。感谢您对我工作的支持，希望ABC英语对您的孩子的学习有帮助，祝您生活愉快！再见！";
+	$TMA_MSG = "TMA,好的，我是ABC英语，在江南大道附近，我们引进美国幼儿园和小学教材，由资深外教老师任教、让孩子在歌曲、游戏、故事、动画片等活动中轻松学英文。我们的外教英语体验活动通常在周日上午或周三晚上，也可以为您预约其他时间。有英语基础的小朋友，还可以旁听我们周日上午的正式课程，您看孩子哪个时间会比较合适呢？";
+    $TMB_MSG = "TMB,好的，我理解。小朋友是还没有开始打算学英语呢？还是已经在其他地方学习了？";
+    $TMC_MSG = "TMC,现在英语作为第二语言，孩子在以后的学习中是必然会运用到的，孩子的英语启蒙越早越好呢。我们ABC英语引进美国幼儿园和小学教材，由资深外教老师任教、让孩子在歌曲、游戏、故事、动画片等活动中轻松学英文，很受小朋友的欢迎，您不妨带孩子来免费体验一下。我们还定期举行公益的英语角活动，即使暂时不打算报课，也可以长期参与我们的英语角活动与更多的家长和小朋友交流，培养英语兴趣。您看是否要帮孩子做一个了解呢？";
+    $TMD_MSG = "TMD,明白了，我们会尽量根据孩子的特点准备活动内容。稍后我们的老师会通知您活动时间和地址，请您留意一下。好吗？";
+    $TME_MSG = "TME,好的,下次有试听课时我再联系您,您看行吗";
+    $TM_UNKNOWN_MSG = "TM_UNKONWN,好的。感谢您对我工作的支持，希望ABC英语对您的孩子的学习有帮助，祝您生活愉快！再见！";
     
 	if(key_exists("notify",$data) &&
 		key_exists("calleeid",$data) &&
@@ -44,14 +45,14 @@
 			$flowdata["retrytext"]="";
 			$flowdata["keyword"]["yes"]=array("有","好","要","可以","行","没问题","合适");
 			$flowdata["keyword"]["no"]=array("不","没");
-            $flowdata["keyword"]["not_sure"]=array("还行","再看","再说");
+            $flowdata["keyword"]["not_sure"]=array("还行","再看","再说","没想好","没打算");
 			$flowdata["keyword"]["query"]=array("哪里","什么","你好");
             $flowdata["keyword"]["notime"]=array("没时间","没空","有安排","有课");
 
 			$pause_play_ms = 200; //是否设置自动打断 0，关闭自动打断，其他值（建议 300-1000，或者关闭），检测多少毫秒的声音就打断。
 
-			$flowdata["retrytext"]= $TMA_START;
-			play_background_asr($pause_play_ms,$TMA_START);
+			$flowdata["retrytext"]= $TM_START_MSG;
+			play_background_asr($pause_play_ms,$TM_START_MSG);
 
 		}
 		else if($notify=="playback_result"){
@@ -113,7 +114,7 @@
 					else if($keyword == "yes"){
 						$flowdata["step"]="TMA";
 						$flowdata["retrytext"]= $TMA_MSG;
-						play_back($TMA_MSG);
+						playback($TMA_MSG);
                     }
 					else if($keyword == "not_sure"){
 						$flowdata["step"]="TMC";
@@ -140,7 +141,7 @@
 					else if($keyword == "notime"){
 						$flowdata["step"]="TME";
 						$flowdata["retrytext"]= $TME_MSG;
-						play_back($TME_MSG);
+						playback($TME_MSG);
                     }
 					else if($keyword == "not_sure"){
 						$flowdata["step"]="TMD";
@@ -158,60 +159,99 @@
 						}	
 					}
 				}
-                
-                
-                
-                
-                
-                
-                
-                
-				else if($flowdata["step"]=="TMA"){
-					if（strstr($message,"没打算")){
+                else if($flowdata["step"]=="TMB"){
+					if($keyword == "yes" || $keyword == "not_sure" || $keyword == "notime"){
 						$flowdata["step"]="TMC";
-						$flowdata["retrytext"]="现在英语作为第二语言，孩子在以后的学习中是必然会运用到的，孩子的英语启蒙越早越好呢。我们ABC英语引进美国幼儿园和小学教材，由资深外教老师任教、让孩子在歌曲、游戏、故事、动画片等活动中轻松学英文，很受小朋友的欢迎，您不妨带孩子来免费体验一下。我们还定期举行公益的英语角活动，即使暂时不打算报课，也可以长期参与我们的英语角活动与更多的家长和小朋友交流，培养英语兴趣。您看是否要帮孩子做一个了解呢？";
-						playback("现在英语作为第二语言，孩子在以后的学习中是必然会运用到的，孩子的英语启蒙越早越好呢。我们ABC英语引进美国幼儿园和小学教材，由资深外教老师任教、让孩子在歌曲、游戏、故事、动画片等活动中轻松学英文，很受小朋友的欢迎，您不妨带孩子来免费体验一下。我们还定期举行公益的英语角活动，即使暂时不打算报课，也可以长期参与我们的英语角活动与更多的家长和小朋友交流，培养英语兴趣。您看是否要帮孩子做一个了解呢");
+						$flowdata["retrytext"]= $TMC_MSG;
+						playback($TMC_MSG);
 					}
-					else if（strstr($message,"在学了") || $keyword == "no"）{
+					else if($keyword == "notime"){
+						$flowdata["step"]="TME";
+						$flowdata["retrytext"]= $TME_MSG;
+						playback($TME_MSG);
+                    }
+					else if($keyword == "no" || strstr($message,"在学了")){
 						$flowdata["step"]="TM_END";
-						$flowdata["retrytext"]="现在英语作为第二语言，孩子在以后的学习中是必然会运用到的，孩子的英语启蒙越早越好呢。我们ABC英语引进美国幼儿园和小学教材，由资深外教老师任教、让孩子在歌曲、游戏、故事、动画片等活动中轻松学英文，很受小朋友的欢迎，您不妨带孩子来免费体验一下。我们还定期举行公益的英语角活动，即使暂时不打算报课，也可以长期参与我们的英语角活动与更多的家长和小朋友交流，培养英语兴趣。您看是否要帮孩子做一个了解呢？";
-						playback("现在英语作为第二语言，孩子在以后的学习中是必然会运用到的，孩子的英语启蒙越早越好呢。我们ABC英语引进美国幼儿园和小学教材，由资深外教老师任教、让孩子在歌曲、游戏、故事、动画片等活动中轻松学英文，很受小朋友的欢迎，您不妨带孩子来免费体验一下。我们还定期举行公益的英语角活动，即使暂时不打算报课，也可以长期参与我们的英语角活动与更多的家长和小朋友交流，培养英语兴趣。您看是否要帮孩子做一个了解呢");
+						play_after_hangup($TM_END_MSG);
 					}
-				
-				
-				}
-				
-				else if($flowdata["step"]=="否决_挽留" || $flowdata["step"]=="未知_挽留"){
-
-					if($keyword == "no"){
-						play_after_hangup("好的，打扰你的，再见");
-					}
-					else if($keyword == "yes"){
-						play_after_hangup("好的，我等下把我的微信号通过短信发给你，你加一下我的微信号，我通过微信发送优惠信息给你，谢谢，祝你生活愉快");
-					}
-					else if($keyword == "query"){
-						play_after_hangup("请自己加入各种关键词处理，演示结束再见");
-					}
-					else{
+					else{ 	
 						if($playstate){
 							console_playback("resume");
 						}
 						else{
-							play_after_hangup("不好意思，现在信号不好，我以后在联系你");
-						}
+							$flowdata["step"]="TMB";
+                            $flowdata["retrytext"]= $TMB_MSG;
+	                        playback($TME_MSG);							
+						}	
 					}
-
 				}
-			}
-
-
-
-		}
+                 else if($flowdata["step"]=="TMC"){
+					if($keyword == "yes"){
+						$flowdata["step"]="TMA";
+						$flowdata["retrytext"]= $TMA_MSG;
+						playback($TMA_MSG);
+					}
+					else if($keyword == "no" || $keyword == "not_sure" || $keyword == "notime"){
+						$flowdata["step"]="TM_END";
+						play_after_hangup($TM_END_MSG);
+					}
+					else{ 	
+						if($playstate){
+							console_playback("resume");
+						}
+						else{
+							$flowdata["step"]="TMC";
+                            $flowdata["retrytext"]= $TMC_MSG;
+	                        playback($TMC_MSG);							
+						}	
+					}
+				}
+                else if($flowdata["step"]=="TMD"){
+					if($keyword == "yes"){
+						$flowdata["step"]="TM_END";
+						play_after_hangup($TM_END_MSG);
+					}
+					else if($keyword == "no" || $keyword == "not_sure" || $keyword == "notime"){
+						$flowdata["step"]="TM_END";
+						play_after_hangup($TM_END_MSG);
+					}
+					else{ 	
+						if($playstate){
+							console_playback("resume");
+						}
+						else{
+							$flowdata["step"]="TM_END";
+                            playback($TM_END_MSG);							
+						}	
+					}
+				}
+                else if($flowdata["step"]=="TME"){
+					if($keyword == "yes"){
+						$flowdata["step"]="TM_END";
+						play_after_hangup($TM_END_MSG);
+					}
+					else if($keyword == "no" || $keyword == "not_sure" || $keyword == "notime"){
+						$flowdata["step"]="TM_END";
+						play_after_hangup($TM_END_MSG);
+					}
+					else{ 	
+						if($playstate){
+							console_playback("resume");
+						}
+						else{
+							$flowdata["step"]="TM_END";
+                            play_after_hangup($TM_END_MSG);							
+						}	
+					}
+				}                
+                
+            }
+        }
 		else if($notify=="leave"){
 			noop();
 		}
 		else{
-			play_after_hangup("未知通知类型");
+			play_after_hangup($TM_UNKNOWN_MSG);
 		}
 	}
 	else {
@@ -244,13 +284,15 @@
 				return "not_sure";
 			}
 		}
+        
+        foreach ($GLOBALS["flowdata"]["keyword"]["notime"] as $value) {
+			if(strstr($message,$value)){
+				return "notime";
+			}
+		}
 
 		return "no_keyword";
 	}
-
-
-	
-
 
 
 	function noop($usermsg="")
@@ -331,10 +373,5 @@
 		));
 		echo(json_encode($result));
 	}
-
-
-
-
-
 
 ?>
